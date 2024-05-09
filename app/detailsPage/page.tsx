@@ -1,4 +1,4 @@
-export function taskDetails() {
+export default function taskDetails() {
   return (
     <div>
       <h1>Task Details</h1>
