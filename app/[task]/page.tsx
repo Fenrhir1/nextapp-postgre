@@ -1,36 +1,40 @@
 "use client";
 import { useState, useEffect } from "react";
 
-export default function TaskPage({
-  params,
-}: {
-  params: { taskName: string; taskId: string };
-}) {
-  const [taskDetails, setTaskDetails] = useState();
+interface TaskDetailsPageProps {
+  task: string;
+}
+
+export default function TaskDetailsPage({ task }: TaskDetailsPageProps) {
+  const [taskDetails, setTaskDetails] = useState<any>({});
 
   useEffect(() => {
-    const fetchTaskDetails = async () => {
+    async function fetchTaskDetails() {
       try {
-        const response = await fetch(`/api/view-task?task=${params.taskName}`);
+        const response = await fetch(`/api/view-task?task=${task}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch task details");
+        }
         const data = await response.json();
-        setTaskDetails(data.rows);
-        console.log("Dettagli della task:", data);
+        setTaskDetails(data);
+        console.log("Task details:", taskDetails);
       } catch (error) {
-        console.error(
-          "Errore durante il recupero dei dettagli della task:",
-          error
-        );
+        console.error("Error fetching task details:", error);
       }
-    };
-
-    if (params.taskName) {
-      fetchTaskDetails();
     }
-  }, [params.taskName]);
+
+    fetchTaskDetails();
+  }, [task]);
 
   return (
     <div>
-      <h1>Dettagli della Task: {params.taskName}</h1>
+      {taskDetails ? (
+        <div>
+          <h1>Task: {taskDetails.task}</h1>
+        </div>
+      ) : (
+        <p>Loading...</p>
+      )}
     </div>
   );
 }
