@@ -1,16 +1,37 @@
 "use client";
-
 import { ChangeEvent, useState, useEffect } from "react";
+
 import { taskArray } from "../types/declaration";
 import Link from "next/link";
+import taskDetails from "../[task]/page";
 
 export default function InputComponent() {
   const [inputText, setInputText] = useState("");
   const [task, setTask] = useState<taskArray[]>([]);
+  const [databaseTask, setDatabaseTask] = useState<taskArray[]>([]);
 
   useEffect(() => {
-    localStorage.setItem("tasks", JSON.stringify(task));
-  }, [task]);
+    const storedTasks = localStorage.getItem("tasks");
+    if (storedTasks) {
+      setTask(JSON.parse(storedTasks));
+    }
+
+    fetchTasksFromDatabase();
+  }, []);
+
+  const fetchTasksFromDatabase = async () => {
+    try {
+      const response = await fetch("/api/view-task");
+      const data = await response.json();
+      setDatabaseTask(data.rows);
+      console.log("Task dal database:", data.rows);
+    } catch (error) {
+      console.error(
+        "Errore durante il recupero delle task dal database:",
+        error
+      );
+    }
+  };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setInputText(e.target.value);
@@ -18,34 +39,68 @@ export default function InputComponent() {
 
   const randomId = () => Math.random();
 
-  const handleButtonClick = () => {
-    setTask([...task, { id: randomId(), task: inputText }]);
+  const handleButtonClick = async () => {
+    const newTask = {
+      task: inputText,
+      id: randomId(),
+    };
+
+    setTask([...task, newTask]);
     setInputText("");
+
+    try {
+      const response = await fetch(
+        `/api/add-task?taskName=${newTask.task}&taskId=${newTask.id}`
+      );
+      const data = await response.json();
+      console.log("Task aggiunta al database:", data);
+    } catch (error) {
+      console.error("Errore durante l'aggiunta della task al database:", error);
+    }
   };
 
-  const handleDeleteTask = (taskId: number) => {
-    setTask(task.filter((item) => item.id !== taskId));
+  const handleDeleteTask = async (id: number) => {
+    try {
+      const response = await fetch(`/api/delete-task?taskId=${id}`);
+      const data = await response.json();
+      console.log("Task eliminata dal database:", data);
+      console.log("id:", id);
+    } catch (error) {
+      console.error(
+        "Errore durante l'eliminazione della task dal database:",
+        error
+      );
+    }
   };
 
   return (
     <div>
-      <input type="text" value={inputText} onChange={handleInputChange} />
+      <input
+        type="text"
+        value={inputText}
+        onChange={handleInputChange}
+        style={{ color: "black" }}
+      />
       <button onClick={handleButtonClick}>Aggiungi task</button>
-      {task.map((item) => (
-        <div
-          key={item.id}
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            width: "200px",
-            margin: "10px",
-          }}
-        >
-          <Link href={`/task/${item.task}`}>{item.task}</Link>
-          <button onClick={() => handleDeleteTask(item.id)}>Elimina</button>
-          <button>Modifica</button>
-        </div>
-      ))}
+
+      <div className="database">
+        <h2>Task dal Database:</h2>
+        <ul>
+          {databaseTask &&
+            databaseTask.map((item) => (
+              <div key={item.id}>
+                <Link
+                  href={{ pathname: "/task", query: { taskName: item.task } }}
+                >
+                  Task: {item.task}, ID: {item.id}
+                </Link>
+                <button onClick={() => handleDeleteTask(item.id)}>
+                  Elimina
+                </button>
+              </div>
+            ))}
+        </ul>
+      </div>
     </div>
   );
 }
