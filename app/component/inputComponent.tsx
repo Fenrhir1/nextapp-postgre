@@ -54,6 +54,7 @@ export default function InputComponent() {
       );
       const data = await response.json();
       console.log("Task aggiunta al database:", data);
+      fetchTasksFromDatabase();
     } catch (error) {
       console.error("Errore durante l'aggiunta della task al database:", error);
     }
@@ -65,6 +66,7 @@ export default function InputComponent() {
       const data = await response.json();
       console.log("Task eliminata dal database:", data);
       console.log("id:", id);
+      fetchTasksFromDatabase();
     } catch (error) {
       console.error(
         "Errore durante l'eliminazione della task dal database:",
@@ -89,9 +91,7 @@ export default function InputComponent() {
           {databaseTask &&
             databaseTask.map((item) => (
               <div key={item.id}>
-                <Link
-                  href={{ pathname: "/task", query: { taskName: item.task } }}
-                >
+                <Link href={{ pathname: "/task", query: { task: item.task } }}>
                   Task: {item.task}, ID: {item.id}
                 </Link>
                 <button onClick={() => handleDeleteTask(item.id)}>

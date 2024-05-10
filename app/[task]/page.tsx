@@ -1,23 +1,25 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+import { useState, useEffect, use } from "react";
 
-interface TaskDetailsPageProps {
-  task: string;
-}
-
-export default function TaskDetailsPage({ task }: TaskDetailsPageProps) {
-  const [taskDetails, setTaskDetails] = useState<any>({});
+export default function TaskDetailsPage() {
+  const [taskDetails, setTaskDetails] = useState<any>([]);
+  const searchParams = useSearchParams();
+  const task = searchParams.get("task");
+  console.log("Task:", task);
 
   useEffect(() => {
     async function fetchTaskDetails() {
       try {
-        const response = await fetch(`/api/view-task?task=${task}`);
+        const response = await fetch(`/api/view-task?taskName=${task}`);
+
         if (!response.ok) {
           throw new Error("Failed to fetch task details");
         }
         const data = await response.json();
-        setTaskDetails(data);
-        console.log("Task details:", taskDetails);
+        const findTask = data.rows.find((row: any) => row.task === task);
+        setTaskDetails(findTask);
+        console.log("Task details:", data.rows);
       } catch (error) {
         console.error("Error fetching task details:", error);
       }
