@@ -1,4 +1,6 @@
 "use client";
+import { Button } from "@nextui-org/button";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useState, useEffect, use } from "react";
 
@@ -29,10 +31,21 @@ export default function TaskDetailsPage() {
   }, [task]);
 
   return (
-    <div>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+        width: "100%",
+      }}
+    >
       {taskDetails ? (
         <div>
           <h1>Task: {taskDetails.task}</h1>
+          <Link href={{ pathname: "/" }}>
+            <Button> Torna indietro</Button>
+          </Link>
         </div>
       ) : (
         <p>Loading...</p>

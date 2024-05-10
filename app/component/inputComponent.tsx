@@ -4,6 +4,9 @@ import { ChangeEvent, useState, useEffect } from "react";
 import { taskArray } from "../types/declaration";
 import Link from "next/link";
 import taskDetails from "../[task]/page";
+import { Input } from "@nextui-org/input";
+import { Button, ButtonGroup } from "@nextui-org/button";
+import EditModal from "./editModal";
 
 export default function InputComponent() {
   const [inputText, setInputText] = useState("");
@@ -77,26 +80,42 @@ export default function InputComponent() {
 
   return (
     <div>
-      <input
-        type="text"
-        value={inputText}
-        onChange={handleInputChange}
-        style={{ color: "black" }}
-      />
-      <button onClick={handleButtonClick}>Aggiungi task</button>
+      <div style={{ display: "flex", flexDirection: "row" }}>
+        <Input
+          type="text"
+          value={inputText}
+          onChange={handleInputChange}
+          style={{ color: "black" }}
+        />
+        <Button onClick={handleButtonClick}>Aggiungi task</Button>
+      </div>
 
       <div className="database">
-        <h2>Task dal Database:</h2>
+        <h2>Task:</h2>
         <ul>
           {databaseTask &&
             databaseTask.map((item) => (
-              <div key={item.id}>
+              <div
+                key={item.id}
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  margin: "10px",
+                  alignItems: "center",
+                  gap: "10px",
+                }}
+              >
                 <Link href={{ pathname: "/task", query: { task: item.task } }}>
-                  Task: {item.task}, ID: {item.id}
+                  Task: {item.task}, Id: {item.id}
                 </Link>
-                <button onClick={() => handleDeleteTask(item.id)}>
+                <Button onClick={() => handleDeleteTask(item.id)}>
                   Elimina
-                </button>
+                </Button>
+                <EditModal
+                  taskId={item.id}
+                  initialTask={item.task}
+                  onTaskEdited={fetchTasksFromDatabase}
+                />
               </div>
             ))}
         </ul>
