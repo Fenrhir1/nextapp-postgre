@@ -1,9 +1,8 @@
 "use client";
-import { ChangeEvent, useState, useEffect } from "react";
 
+import { ChangeEvent, useState, useEffect } from "react";
 import { taskArray } from "../types/declaration";
 import Link from "next/link";
-import taskDetails from "../[task]/page";
 import { Input } from "@nextui-org/input";
 import { Button, ButtonGroup } from "@nextui-org/button";
 import EditModal from "./editModal";

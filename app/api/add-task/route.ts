@@ -7,7 +7,7 @@ export async function GET(request: Request) {
   const taskId = searchParams.get("taskId");
 
   try {
-    if (!taskName || !taskId) throw new Error("Pet and owner names required");
+    if (!taskName || !taskId) throw new Error("Task name and id required");
     await sql`INSERT INTO Tasks (Task, Id) VALUES (${taskName}, ${taskId} );`;
   } catch (error) {
     return NextResponse.json({ error }, { status: 500 });
