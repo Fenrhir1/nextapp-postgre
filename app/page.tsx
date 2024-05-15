@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
-import InputComponent from "./component/inputComponent";
+import InputComponent from "./component/Input";
 import { NextUIProvider } from "@nextui-org/react";
+import TaskTable from "./component/TaskTable";
 
 export default function Home() {
   return (
@@ -17,6 +18,7 @@ export default function Home() {
           }}
         >
           <InputComponent />
+          <TaskTable />
         </main>
       </NextUIProvider>
     </main>
