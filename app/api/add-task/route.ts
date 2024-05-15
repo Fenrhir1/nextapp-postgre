@@ -10,9 +10,25 @@ export async function GET(request: Request) {
     if (!taskName || !taskId) throw new Error("Task name and id required");
     await sql`INSERT INTO Tasks (Task, Id) VALUES (${taskName}, ${taskId} );`;
   } catch (error) {
-    return NextResponse.json({ error }, { status: 500 });
+    return NextResponse.json(
+      { error },
+      {
+        status: 500,
+        headers: {
+          "Cache-Control": "no-store, no-cache, must-revalidate",
+        },
+      }
+    );
   }
 
   const tasks = await sql`SELECT * FROM Tasks;`;
-  return NextResponse.json({ tasks }, { status: 200 });
+  return NextResponse.json(
+    { tasks },
+    {
+      status: 200,
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate",
+      },
+    }
+  );
 }

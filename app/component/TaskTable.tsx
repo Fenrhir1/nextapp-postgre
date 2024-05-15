@@ -1,20 +1,21 @@
 "use client";
-
 import { Button } from "@nextui-org/button";
 import Link from "next/link";
 import EditModal from "./editModal";
 import { useEffect, useState } from "react";
 import { taskArray } from "../types/declaration";
 
-export default function TaskTable() {
-  const [task, setTask] = useState<taskArray[]>([]);
+export default function TaskTable({ tasks }: { tasks: taskArray[] }) {
   const [databaseTask, setDatabaseTask] = useState<taskArray[]>([]);
 
   const fetchTasksFromDatabase = async () => {
     try {
-      const response = await fetch("/api/view-task", { cache: "no-cache" });
+      const response = await fetch("/api/view-task", {
+        cache: "no-store",
+        next: { revalidate: 3600 },
+      });
       const data = await response.json();
-      console.log("data:", data.rows);
+
       await setDatabaseTask(data.rows);
     } catch (error) {
       console.error(
@@ -26,7 +27,7 @@ export default function TaskTable() {
 
   useEffect(() => {
     fetchTasksFromDatabase();
-  }, []);
+  }, [tasks]);
 
   const handleDeleteTask = async (id: number) => {
     try {
@@ -34,14 +35,13 @@ export default function TaskTable() {
       const data = await response.json();
       console.log("Task eliminata dal database:", data);
       console.log("id:", id);
-      fetchTasksFromDatabase();
+      await fetchTasksFromDatabase();
     } catch (error) {
       console.error(
         "Errore durante l'eliminazione della task dal database:",
         error
       );
     }
-    fetchTasksFromDatabase();
   };
   return (
     <div>

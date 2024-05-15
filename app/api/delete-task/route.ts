@@ -9,5 +9,13 @@ export async function GET(request: Request) {
   await sql`DELETE FROM Tasks WHERE Id = ${taskId};`;
 
   const tasks = await sql`SELECT * FROM Tasks;`;
-  return NextResponse.json({ tasks }, { status: 200 });
+  return NextResponse.json(
+    { tasks },
+    {
+      status: 200,
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate",
+      },
+    }
+  );
 }
