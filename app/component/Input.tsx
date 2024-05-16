@@ -1,12 +1,8 @@
 "use client";
 
 import { ChangeEvent, useState, useEffect } from "react";
-import { taskArray } from "../types/declaration";
-import Link from "next/link";
 import { Input } from "@nextui-org/input";
-import { Button, ButtonGroup } from "@nextui-org/button";
-import EditModal from "./editModal";
-import TaskTable from "./TaskTable";
+import { Button } from "@nextui-org/button";
 
 export default function InputComponent({
   onTaskAdded,
@@ -14,7 +10,6 @@ export default function InputComponent({
   onTaskAdded: () => void;
 }) {
   const [inputText, setInputText] = useState("");
-  const [databaseTask, setDatabaseTask] = useState<taskArray[]>([]);
 
   const fetchTasksFromDatabase = async () => {
     try {
@@ -23,8 +18,6 @@ export default function InputComponent({
         next: { revalidate: 3600 },
       });
       const data = await response.json();
-
-      await setDatabaseTask(data.rows);
     } catch (error) {
       console.error(
         "Errore durante il recupero delle task dal database:",
@@ -41,17 +34,11 @@ export default function InputComponent({
     setInputText(e.target.value);
   };
 
-  const randomId = () => {
-    return Math.floor(Math.random() * 10000);
-  };
-
   const handleButtonClick = async () => {
     const newTask = {
       task: inputText,
-      id: Math.random(),
+      id: Math.floor(Math.random() * 1000),
     };
-
-    // Optimistic update (optional)
 
     setInputText("");
 
@@ -61,18 +48,12 @@ export default function InputComponent({
       );
       const data = await response.json();
       console.log("Task aggiunta al database:", data);
-
-      // Update databaseTask state after successful API call (optional)
-      await fetchTasksFromDatabase(); // Essential to reflect changes
-
-      // Trigger re-render in TaskTable (using a callback)
+      await fetchTasksFromDatabase();
       if (onTaskAdded) {
         onTaskAdded();
       }
     } catch (error) {
       console.error("Errore durante l'aggiunta della task al database:", error);
-
-      // Revert optimistic update if necessary (optional)
     }
   };
 

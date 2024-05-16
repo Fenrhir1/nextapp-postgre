@@ -1,7 +1,5 @@
 "use client";
 import { Button } from "@nextui-org/button";
-import Link from "next/link";
-import EditModal from "./editModal";
 import { useEffect, useState } from "react";
 import { taskArray } from "../types/declaration";
 
@@ -43,6 +41,24 @@ export default function TaskTable({ tasks }: { tasks: taskArray[] }) {
       );
     }
   };
+
+  const handleTaskChange = async (id: number, newTask: string) => {
+    try {
+      const response = await fetch("/api/edit-task", {
+        method: "PUT",
+        body: JSON.stringify({ taskId: id, taskName: newTask }),
+      });
+      const data = await response.json();
+      console.log("Task aggiornata nel database:", data);
+      await fetchTasksFromDatabase();
+    } catch (error) {
+      console.error(
+        "Errore durante l'aggiornamento della task nel database:",
+        error
+      );
+    }
+  };
+
   return (
     <div>
       <h2>Task:</h2>
@@ -59,15 +75,12 @@ export default function TaskTable({ tasks }: { tasks: taskArray[] }) {
                 gap: "10px",
               }}
             >
-              <Link href={{ pathname: "/task", query: { task: item.task } }}>
-                Task: {item.task}
-              </Link>
-              <Button onClick={() => handleDeleteTask(item.id)}>Elimina</Button>
-              <EditModal
-                taskId={item.id}
-                initialTask={item.task}
-                onTaskEdited={fetchTasksFromDatabase}
+              <input
+                type="text"
+                defaultValue={item.task}
+                onBlur={(e) => handleTaskChange(item.id, e.target.value)}
               />
+              <Button onClick={() => handleDeleteTask(item.id)}>Elimina</Button>
             </div>
           ))}
       </ul>

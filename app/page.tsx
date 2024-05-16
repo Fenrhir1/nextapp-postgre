@@ -3,7 +3,6 @@ import InputComponent from "./component/Input";
 import { NextUIProvider } from "@nextui-org/react";
 import TaskTable from "./component/TaskTable";
 import { useState } from "react";
-export const dynamic = "force-dynamic";
 
 export default function Home() {
   const [tasks, setTasks] = useState([]);

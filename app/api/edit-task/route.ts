@@ -13,8 +13,5 @@ export async function PUT(request: Request) {
   const tasks = await sql`SELECT * FROM Tasks;`;
   return NextResponse.json(tasks, {
     status: 200,
-    headers: {
-      "Cache-Control": "no-store, no-cache, must-revalidate",
-    },
   });
 }
