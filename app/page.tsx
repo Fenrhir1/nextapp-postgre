@@ -28,14 +28,24 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+    <main
+      className="flex min-h-screen flex-col items-center justify-between p-24"
+      style={{ height: "100vh" }}
+    >
       <NextUIProvider>
+        <h1
+          className="text-10xl font-bold text-center text-foreground"
+          style={{ height: "100%", fontSize: "10rem", color: "#E0E0E0" }}
+        >
+          Tasks!
+        </h1>
         <main
           className="dark text-foreground bg-background"
           style={{
-            height: "100vh",
+            height: "100%",
             width: "100%",
             display: "flex",
+            flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
           }}

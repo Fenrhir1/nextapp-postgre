@@ -60,7 +60,15 @@ export default function TaskTable({ tasks }: { tasks: taskArray[] }) {
   };
 
   return (
-    <div>
+    <div
+      style={{
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
       <h2>Task:</h2>
       <ul>
         {databaseTask &&
@@ -68,19 +76,34 @@ export default function TaskTable({ tasks }: { tasks: taskArray[] }) {
             <div
               key={item.id}
               style={{
+                width: "100%",
                 display: "flex",
-                flexDirection: "row",
+                flexDirection: "column",
                 margin: "10px",
                 alignItems: "center",
                 gap: "10px",
               }}
             >
-              <input
-                type="text"
-                defaultValue={item.task}
-                onBlur={(e) => handleTaskChange(item.id, e.target.value)}
-              />
-              <Button onClick={() => handleDeleteTask(item.id)}>Elimina</Button>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  gap: "10px",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "1000px",
+                }}
+              >
+                <input
+                  style={{ width: "100%" }}
+                  type="text"
+                  defaultValue={item.task}
+                  onBlur={(e) => handleTaskChange(item.id, e.target.value)}
+                />
+                <Button onClick={() => handleDeleteTask(item.id)}>
+                  Elimina
+                </Button>
+              </div>
             </div>
           ))}
       </ul>
